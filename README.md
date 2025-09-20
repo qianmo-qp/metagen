@@ -63,14 +63,18 @@ Refer to `diffusion/train.py` file for details.
 ## Citation
 If you find our work useful, please consider citing it:
 ```
-@misc{
-  hen2025inversedesigndiffractivemetasurfaces,
-  title={Inverse Design of Diffractive Metasurfaces Using Diffusion Models}, 
-  author={Liav Hen and Erez Yosef and Dan Raviv and Raja Giryes and Jacob Scheuer},
-  year={2025},
-  eprint={2506.21748},
-  archivePrefix={arXiv},
-  primaryClass={physics.optics},
-  url={https://arxiv.org/abs/2506.21748}, 
+@article{
+	hen2025metagen,
+	author = {Hen, Liav and Yosef, Erez and Raviv, Dan and Giryes, Raja and Scheuer, Jacob},
+	title = {Inverse Design of Diffractive Metasurfaces Using Diffusion Models},
+	journal = {ACS Photonics},
+	volume = {0},
+	number = {0},
+	pages = {null},
+	year = {0},
+	doi = {10.1021/acsphotonics.5c01384},
+	URL = { https://doi.org/10.1021/acsphotonics.5c01384},
+	eprint = { https://doi.org/10.1021/acsphotonics.5c01384}
 }
+
 ```
