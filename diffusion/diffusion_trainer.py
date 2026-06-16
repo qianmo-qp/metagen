@@ -29,8 +29,8 @@ class DiffusionTrainer:
         self.batch_size = args.batch_size
         self.train_set, self.test_set = datasets
 
-        self.train_loader = DataLoader(self.train_set, self.args.batch_size, num_workers=8, pin_memory=True, shuffle=True, drop_last=True, prefetch_factor=4)
-        self.test_loader = DataLoader(self.test_set, self.args.batch_size, num_workers=8, pin_memory=True, shuffle=True, drop_last=True, prefetch_factor=4)
+        self.train_loader = DataLoader(self.train_set, self.args.batch_size, num_workers=0, pin_memory=False, shuffle=True, drop_last=True)
+        self.test_loader = DataLoader(self.test_set, self.args.batch_size, num_workers=0, pin_memory=False, shuffle=True, drop_last=True)
 
         self.train_iter = None
         self.test_iter = None
@@ -100,7 +100,7 @@ class DiffusionTrainer:
         for _ in range(self.args.accumulation_steps):
             try:
                 sample = next(self.train_iter)
-            except:
+            except Exception:
                 self.train_iter = iter(self.train_loader)
                 sample = next(self.train_iter)
             loss, _ = self.do_forward(sample)
@@ -133,7 +133,6 @@ class DiffusionTrainer:
 
         tick = utils.now()
         for _ in range(self.curr_step, self.args.num_steps):
-
             self.optimizer.zero_grad(set_to_none=True)
             train_loss = self.train_step()
 

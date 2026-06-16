@@ -44,16 +44,16 @@ class MetaLensDatasetLMDB(Dataset):
             # for h in self.heights:
                 # self.allowed_suffices.append(f'h{h}_lam{lam}')
         self.envs = [lmdb.open(join(self.lmdb_root_path, lmdb_path), readonly=True, lock=False) for lmdb_path in os.listdir(self.lmdb_root_path) if lmdb_path[13:] in self.allowed_suffices]
-        self.txns = [env.begin(write=False) for env in self.envs]
         self.keys = []
 
         # Populate keys and index mapping
-        for i, txn in enumerate(self.txns):
-            with txn.cursor() as cursor:
-                for n, (key, _) in enumerate(cursor):
-                    if n == size_limit:
-                        break
-                    self.keys.append((i, key))
+        for i, env in enumerate(self.envs):
+            with env.begin(write=False) as txn:
+                with txn.cursor() as cursor:
+                    for n, (key, _) in enumerate(cursor):
+                        if n == size_limit:
+                            break
+                        self.keys.append((i, key))
 
 
         # Data-handling
@@ -138,9 +138,10 @@ class MetaLensDatasetLMDB(Dataset):
 
     def __getitem__(self, idx):
         env_index, key = self.keys[idx]
-        txn = self.txns[env_index]
-        with txn.cursor() as cursor:
-            data_bytes = cursor.get(key)
+        env = self.envs[env_index]
+        with env.begin(write=False) as txn:
+            with txn.cursor() as cursor:
+                data_bytes = cursor.get(key)
         if data_bytes is None:
             raise IndexError(f"Key {key} not found in the LMDB database {env_index}.")
 
