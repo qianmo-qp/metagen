@@ -501,7 +501,7 @@ class EDMDiT(DiT):
         """
             Forward function for DiT-EDM API
             1. Changing terminologies.
-            2. Performing labels dropout for classifier-free guidance.
+            2. Performing labels dropout for classifier-free guidance (training only).
         """
 
         # 1. Change terminologies
@@ -509,10 +509,20 @@ class EDMDiT(DiT):
         t_dit = noise_labels
         y_dit = class_labels
 
-        # 2. Perform labels dropout for classifier-free guidance
-        y_dit = y_dit * (torch.rand([x.shape[0], 1], device=x.device) >= self.class_dropout_prob).to(y_dit.dtype)
+        # 2. Perform labels dropout for classifier-free guidance (training only;
+        #    must NOT randomly zero condition vectors at inference)
+        if self.training and self.class_dropout_prob > 0:
+            y_dit = y_dit * (torch.rand([x.shape[0], 1], device=x.device) >= self.class_dropout_prob).to(y_dit.dtype)
 
         return super().forward(x_dit, t_dit, y_dit)
+
+
+# Aliases so that EDMPrecond can resolve `globals()[model_type]` for DiT variants.
+# The actual size differences (depth / num_heads / patch_size / model_channels)
+# are injected via model_kwargs in diffusion/get_model.py.
+DiTB8 = EDMDiT
+DiTL8 = EDMDiT
+DiTS8 = EDMDiT
 
 # ---------------------------------------------------------------------------
 

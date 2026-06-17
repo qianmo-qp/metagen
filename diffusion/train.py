@@ -156,7 +156,7 @@ def train():
     for arg in vars(args):
         logger.info(f"\t{arg:<20}: {getattr(args, arg)}")
 
-    if args.model_type in ["DhariwalUNet", "SongUNet"]:
+    if args.model_type in ["DhariwalUNet", "SongUNet", "DiTB8", "DiTL8", "DiTS8"]:
         with torch.no_grad():
             images = torch.zeros([args.batch_size, model.module.img_channels, model.module.img_resolution, model.module.img_resolution], device=device)
             sigma = torch.ones([args.batch_size], device=device)
